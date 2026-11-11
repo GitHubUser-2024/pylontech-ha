@@ -52,8 +52,8 @@
       },
       {
        "type": "tile",
-       "entity": "sensor.pylontech_cell_spread_7d_avg",
-       "name": "Spread 7d avg"
+       "entity": "sensor.pylontech_cell_spread_7d_max",
+       "name": "Spread 7d max"
       },
       {
        "type": "tile",
@@ -98,7 +98,7 @@
       },
       {
        "type": "markdown",
-       "content": "{% set a = states.sensor.pylontech_cell_table.attributes %}{% set t = a.cells %}{% if t %}{% set nows = t | map(attribute='now') | list %}{% set lo = nows | min %}{% set hi = nows | max %}\n| Cell | Now | Δ now | Min 7d | Max 7d | Avg 7d | Δ avg 7d |\n|:--:|--:|--:|--:|--:|--:|--:|\n{% for r in t -%}\n| {{ r.cell }} | {% if r.now == hi %}**▲ {{ r.now }}**{% elif r.now == lo %}**▼ {{ r.now }}**{% else %}{{ r.now }}{% endif %} | {{ '%+.1f' | format(r.dev_now) }} | {{ r.min }} | {{ r.max }} | {{ '%.1f' | format(r.avg) }} | {{ '%+.1f' | format(r.dev) }} |\n{% endfor -%}\n| **Spread** | **{{ a.spread_now }}** | | | **{{ a.spread_max_7d }}** max | **{{ '%.1f' | format(a.spread_avg_7d) }}** avg | |\n\n<small>All values in mV. **Δ** = cell minus pack average at the same moment (imbalance); Min/Max 7d mostly follow the state of charge. Spread = highest − lowest cell. 7-day window: {{ a.samples_7d }} samples over {{ '%.1f' | format(a.history_days) }} days (fills up over a week). Updated {{ a.updated | timestamp_custom('%d.%m. %H:%M') }}, every 10 min.</small>\n{% else %}No data yet.{% endif %}",
+       "content": "{% set a = states.sensor.pylontech_cell_table.attributes %}{% set t = a.cells %}{% if t %}{% set nows = t | map(attribute='now') | list %}{% set lo = nows | min %}{% set hi = nows | max %}{% set worst = t | map(attribute='dev_max') | map('abs') | max %}\n| Cell | Now | Δ now | Min 7d | Max 7d | Avg 7d | Δ max 7d |\n|:--:|--:|--:|--:|--:|--:|--:|\n{% for r in t -%}\n| {{ r.cell }} | {% if r.now == hi %}**▲ {{ r.now }}**{% elif r.now == lo %}**▼ {{ r.now }}**{% else %}{{ r.now }}{% endif %} | {{ '%+.1f' | format(r.dev_now) }} | {{ r.min }} | {{ r.max }} | {{ '%.1f' | format(r.avg) }} | {% if r.dev_max | abs == worst and worst > 0 %}**{{ '%+.1f' | format(r.dev_max) }}**{% else %}{{ '%+.1f' | format(r.dev_max) }}{% endif %} |\n{% endfor -%}\n| **Spread** | **{{ a.spread_now }}** | | | | <small>avg {{ '%.1f' | format(a.spread_avg_7d) }}</small> | **{{ a.spread_max_7d }}** max |\n\n<small>All values in mV. **Δ** = cell minus pack average at the same moment (imbalance). **Δ max 7d** = the largest such deviation of the cell in 7 days (sign = above/below the pack); bold = the cell that drifted furthest. Min/Max 7d mostly follow the state of charge. Spread = highest − lowest cell (7-day max; average in small print). 7-day window: {{ a.samples_7d }} samples over {{ '%.1f' | format(a.history_days) }} days (fills up over a week). Updated {{ a.updated | timestamp_custom('%d.%m. %H:%M') }}, every 10 min.</small>\n{% else %}No data yet.{% endif %}",
        "grid_options": {
         "columns": "full"
        }
@@ -200,7 +200,7 @@
        "hours_to_show": 168,
        "entities": [
         "sensor.pylontech_cell_spread",
-        "sensor.pylontech_cell_spread_7d_avg"
+        "sensor.pylontech_cell_spread_7d_max"
        ],
        "grid_options": {
         "columns": "full"

@@ -89,7 +89,8 @@ def to_cells(stats, timestamp):
         "spread_now": stats["spread_now_mv"], "spread_avg_7d": stats["spread_avg_mv"],
         "spread_max_7d": stats["spread_max_mv"], "updated": timestamp,
         "cells": [{"cell": c["cell"], "now": c["now_mv"], "min": c["min_mv"], "max": c["max_mv"],
-                   "avg": c["avg_mv"], "dev": c["dev_avg_mv"], "dev_now": c["dev_now_mv"]}
+                   "avg": c["avg_mv"], "dev": c["dev_avg_mv"], "dev_now": c["dev_now_mv"],
+                   "dev_max": c.get("dev_max_mv")}
                   for c in stats["cells"]],
     }
 

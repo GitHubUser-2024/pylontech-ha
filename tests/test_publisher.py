@@ -70,7 +70,7 @@ class PublisherTest(unittest.TestCase):
         self.assertTrue(all(r for t, (p, r) in topics.items() if t.endswith("/config")))
         cells, retain = topics["pylontech/cells"]
         self.assertFalse(retain)
-        self.assertEqual(set(cells["cells"][0]), {"cell", "now", "min", "max", "avg", "dev", "dev_now"})
+        self.assertEqual(set(cells["cells"][0]), {"cell", "now", "min", "max", "avg", "dev", "dev_now", "dev_max"})
         self.assertEqual(len(cells["cells"]), 15)
         dev = topics["homeassistant/sensor/pylontech_voltage/config"][0]["device"]
         self.assertEqual(dev["via_device"], "parent_host")

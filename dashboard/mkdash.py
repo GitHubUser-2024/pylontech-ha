@@ -26,15 +26,15 @@ TEMP_LABELS = ["Cells 1–4", "Cells 5–8", "Cells 9–12", "Cells 13–15"]
 def build(prefix="pylontech", title="Pylontech", cells=15, date_format="%d.%m. %H:%M"):
     S = "sensor.%s_" % prefix
     B = "binary_sensor.%s_" % prefix
-    md = ("{% set a = states." + S + "cell_table.attributes %}" + """{% set t = a.cells %}{% if t %}{% set nows = t | map(attribute='now') | list %}{% set lo = nows | min %}{% set hi = nows | max %}
-| Cell | Now | Δ now | Min 7d | Max 7d | Avg 7d | Δ avg 7d |
+    md = ("{% set a = states." + S + "cell_table.attributes %}" + """{% set t = a.cells %}{% if t %}{% set nows = t | map(attribute='now') | list %}{% set lo = nows | min %}{% set hi = nows | max %}{% set worst = t | map(attribute='dev_max') | map('abs') | max %}
+| Cell | Now | Δ now | Min 7d | Max 7d | Avg 7d | Δ max 7d |
 |:--:|--:|--:|--:|--:|--:|--:|
 {% for r in t -%}
-| {{ r.cell }} | {% if r.now == hi %}**▲ {{ r.now }}**{% elif r.now == lo %}**▼ {{ r.now }}**{% else %}{{ r.now }}{% endif %} | {{ '%+.1f' | format(r.dev_now) }} | {{ r.min }} | {{ r.max }} | {{ '%.1f' | format(r.avg) }} | {{ '%+.1f' | format(r.dev) }} |
+| {{ r.cell }} | {% if r.now == hi %}**▲ {{ r.now }}**{% elif r.now == lo %}**▼ {{ r.now }}**{% else %}{{ r.now }}{% endif %} | {{ '%+.1f' | format(r.dev_now) }} | {{ r.min }} | {{ r.max }} | {{ '%.1f' | format(r.avg) }} | {% if r.dev_max | abs == worst and worst > 0 %}**{{ '%+.1f' | format(r.dev_max) }}**{% else %}{{ '%+.1f' | format(r.dev_max) }}{% endif %} |
 {% endfor -%}
-| **Spread** | **{{ a.spread_now }}** | | | **{{ a.spread_max_7d }}** max | **{{ '%.1f' | format(a.spread_avg_7d) }}** avg | |
+| **Spread** | **{{ a.spread_now }}** | | | | <small>avg {{ '%.1f' | format(a.spread_avg_7d) }}</small> | **{{ a.spread_max_7d }}** max |
 
-<small>All values in mV. **Δ** = cell minus pack average at the same moment (imbalance); Min/Max 7d mostly follow the state of charge. Spread = highest − lowest cell. 7-day window: {{ a.samples_7d }} samples over {{ '%.1f' | format(a.history_days) }} days (fills up over a week). Updated {{ a.updated | timestamp_custom('""" + date_format + """') }}, every 10 min.</small>
+<small>All values in mV. **Δ** = cell minus pack average at the same moment (imbalance). **Δ max 7d** = the largest such deviation of the cell in 7 days (sign = above/below the pack); bold = the cell that drifted furthest. Min/Max 7d mostly follow the state of charge. Spread = highest − lowest cell (7-day max; average in small print). 7-day window: {{ a.samples_7d }} samples over {{ '%.1f' | format(a.history_days) }} days (fills up over a week). Updated {{ a.updated | timestamp_custom('""" + date_format + """') }}, every 10 min.</small>
 {% else %}No data yet.{% endif %}""")
 
     def tile(e, name=None):
@@ -52,7 +52,7 @@ def build(prefix="pylontech", title="Pylontech", cells=15, date_format="%d.%m. %
             tile(S + "soc_bms_remaining_full", "SOC"), tile(S + "power", "Power"),
             tile(S + "pack_voltage", "Voltage"), tile(S + "current", "Current"),
             tile(S + "remaining_capacity", "Remaining"), tile(S + "full_capacity", "Full capacity"),
-            tile(S + "cell_spread", "Cell spread"), tile(S + "cell_spread_7d_avg", "Spread 7d avg"),
+            tile(S + "cell_spread", "Cell spread"), tile(S + "cell_spread_7d_max", "Spread 7d max"),
             tile(S + "alarms", "Alarms"), tile(S + "cycles", "Cycles"),
             tile(S + "bms_state", "BMS state"), tile(B + "bms_protection", "Protection"),
             tile(B + "charge_enabled", "Charge enabled"), tile(B + "discharge_enabled", "Discharge enabled")]},
@@ -71,7 +71,7 @@ def build(prefix="pylontech", title="Pylontech", cells=15, date_format="%d.%m. %
         {"type": "grid", "column_span": 2, "cards": [
             {"type": "heading", "heading": "History", "icon": "mdi:chart-line"},
             {"type": "history-graph", "title": "Cell spread (7 days)", "hours_to_show": 168,
-             "entities": [S + "cell_spread", S + "cell_spread_7d_avg"], "grid_options": full},
+             "entities": [S + "cell_spread", S + "cell_spread_7d_max"], "grid_options": full},
             {"type": "history-graph", "title": "Cell min / max (7 days)", "hours_to_show": 168,
              "entities": [S + "cell_min_voltage", S + "cell_max_voltage"], "grid_options": full},
             {"type": "history-graph", "title": "All cells (24 h)", "hours_to_show": 24,

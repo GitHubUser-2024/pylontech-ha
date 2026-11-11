@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.0 — 2026-11-11
+
+- pylontech-rs485 → v0.3.0. Cell table attribute `dev_max` per cell (largest deviation from the pack mean in 7 days, signed).
+- Dashboard shows maxima instead of averages: tile "Spread 7d max", spread graph with the 7-day max, cell-table column "Δ max 7d" (the furthest-drifting cell in bold); the 7-day average spread stays in small print.
+
 ## 0.3.0 — 2026-11-11
 
 Made usable for others; existing installs carry on unchanged (same entities and IDs).

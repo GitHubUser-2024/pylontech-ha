@@ -165,7 +165,7 @@ With the default device name `Pylontech`:
 |---|---|
 | Pack | `sensor.pylontech_pack_voltage`, `_current`, `_power`, `_soc_bms_remaining_full`, `_remaining_capacity`, `_full_capacity`, `_cycles` |
 | Cells | `sensor.pylontech_cell_01_voltage` … `_cell_15_voltage`, `_cell_min_voltage`, `_cell_max_voltage`, `_cell_min_id`, `_cell_max_id`, `_cell_spread`, `_cell_spread_7d_avg`, `_cell_spread_7d_max` |
-| Table | `sensor.pylontech_cell_table`: state = samples in the 7-day window; attributes `cells[]` (`cell`, `now`, `min`, `max`, `avg`, `dev`, `dev_now`), `spread_now`, `spread_avg_7d`, `spread_max_7d`, `history_days`, `updated` |
+| Table | `sensor.pylontech_cell_table`: state = samples in the 7-day window; attributes `cells[]` (`cell`, `now`, `min`, `max`, `avg`, `dev`, `dev_now`, `dev_max` = largest deviation from the pack mean in 7 days), `spread_now`, `spread_avg_7d`, `spread_max_7d`, `history_days`, `updated` |
 | Temperatures | `sensor.pylontech_bms_temperature`, `_temperature_cells_1_4`, `_5_8`, `_9_12`, `_13_15` |
 | BMS limits | `sensor.pylontech_charge_voltage_limit`, `_discharge_voltage_limit`, `_charge_current_limit`, `_discharge_current_limit` |
 | Status | `sensor.pylontech_alarms` (`OK` or a readable list), `sensor.pylontech_bms_state` (`charging` / `discharging` / `idle`), binary sensors `charge_enabled`, `discharge_enabled`, `charge_immediately_request`, `charge_mosfet`, `discharge_mosfet`, `fully_charged`, `heater`, `bms_protection` (problem) |
