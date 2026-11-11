@@ -1,0 +1,3 @@
+[submodule "lib/pylontech-rs485"]
+	path = lib/pylontech-rs485
+	url = ../pylontech-rs485.git

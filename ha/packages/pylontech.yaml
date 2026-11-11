@@ -1,0 +1,17 @@
+# Home Assistant package: runs the Pylontech publisher every 10 minutes.
+# Needs `homeassistant: packages: !include_dir_named packages` in configuration.yaml
+# and the deployed files in /config/scripts/pylontech/ (see deploy.sh).
+
+shell_command:
+  pylontech_publish: "python3 /config/scripts/pylontech/run.py --config /config/scripts/pylontech/config.ini"
+
+automation:
+  - id: pylontech_publish_10min
+    alias: "Pylontech: publish every 10 min"
+    description: "Reads the Pylontech battery over RS485 and publishes to MQTT (pylontech-ha)."
+    mode: single
+    triggers:
+      - trigger: time_pattern
+        minutes: "/10"
+    actions:
+      - action: shell_command.pylontech_publish

@@ -1,0 +1,279 @@
+{
+ "title": "Pylontech",
+ "views": [
+  {
+   "title": "Pylontech",
+   "path": "pylontech",
+   "type": "sections",
+   "max_columns": 3,
+   "sections": [
+    {
+     "type": "grid",
+     "cards": [
+      {
+       "type": "heading",
+       "heading": "Now",
+       "icon": "mdi:battery-high"
+      },
+      {
+       "type": "tile",
+       "entity": "sensor.pylontech_soc_bms_remaining_full",
+       "name": "SOC"
+      },
+      {
+       "type": "tile",
+       "entity": "sensor.pylontech_power",
+       "name": "Power"
+      },
+      {
+       "type": "tile",
+       "entity": "sensor.pylontech_pack_voltage",
+       "name": "Voltage"
+      },
+      {
+       "type": "tile",
+       "entity": "sensor.pylontech_current",
+       "name": "Current"
+      },
+      {
+       "type": "tile",
+       "entity": "sensor.pylontech_remaining_capacity",
+       "name": "Remaining"
+      },
+      {
+       "type": "tile",
+       "entity": "sensor.pylontech_full_capacity",
+       "name": "Full capacity"
+      },
+      {
+       "type": "tile",
+       "entity": "sensor.pylontech_cell_spread",
+       "name": "Cell spread"
+      },
+      {
+       "type": "tile",
+       "entity": "sensor.pylontech_cell_spread_7d_avg",
+       "name": "Spread 7d avg"
+      },
+      {
+       "type": "tile",
+       "entity": "sensor.pylontech_alarms",
+       "name": "Alarms"
+      },
+      {
+       "type": "tile",
+       "entity": "sensor.pylontech_cycles",
+       "name": "Cycles"
+      },
+      {
+       "type": "tile",
+       "entity": "sensor.pylontech_bms_state",
+       "name": "BMS state"
+      },
+      {
+       "type": "tile",
+       "entity": "binary_sensor.pylontech_bms_protection",
+       "name": "Protection"
+      },
+      {
+       "type": "tile",
+       "entity": "binary_sensor.pylontech_charge_enabled",
+       "name": "Charge enabled"
+      },
+      {
+       "type": "tile",
+       "entity": "binary_sensor.pylontech_discharge_enabled",
+       "name": "Discharge enabled"
+      }
+     ]
+    },
+    {
+     "type": "grid",
+     "column_span": 2,
+     "cards": [
+      {
+       "type": "heading",
+       "heading": "Cells",
+       "icon": "mdi:table"
+      },
+      {
+       "type": "markdown",
+       "content": "{% set a = states.sensor.pylontech_cell_table.attributes %}{% set t = a.cells %}{% if t %}{% set nows = t | map(attribute='now') | list %}{% set lo = nows | min %}{% set hi = nows | max %}\n| Cell | Now | Δ now | Min 7d | Max 7d | Avg 7d | Δ avg 7d |\n|:--:|--:|--:|--:|--:|--:|--:|\n{% for r in t -%}\n| {{ r.cell }} | {% if r.now == hi %}**▲ {{ r.now }}**{% elif r.now == lo %}**▼ {{ r.now }}**{% else %}{{ r.now }}{% endif %} | {{ '%+.1f' | format(r.dev_now) }} | {{ r.min }} | {{ r.max }} | {{ '%.1f' | format(r.avg) }} | {{ '%+.1f' | format(r.dev) }} |\n{% endfor -%}\n| **Spread** | **{{ a.spread_now }}** | | | **{{ a.spread_max_7d }}** max | **{{ '%.1f' | format(a.spread_avg_7d) }}** avg | |\n\n<small>All values in mV. **Δ** = cell minus pack average at the same moment (imbalance); Min/Max 7d mostly follow the state of charge. Spread = highest − lowest cell. 7-day window: {{ a.samples_7d }} samples over {{ '%.1f' | format(a.history_days) }} days (fills up over a week). Updated {{ a.updated | timestamp_custom('%d.%m. %H:%M') }}, every 10 min.</small>\n{% else %}No data yet.{% endif %}",
+       "grid_options": {
+        "columns": "full"
+       }
+      }
+     ]
+    },
+    {
+     "type": "grid",
+     "cards": [
+      {
+       "type": "heading",
+       "heading": "Temperatures & limits",
+       "icon": "mdi:thermometer"
+      },
+      {
+       "type": "tile",
+       "entity": "sensor.pylontech_bms_temperature",
+       "name": "BMS"
+      },
+      {
+       "type": "tile",
+       "entity": "sensor.pylontech_temperature_cells_1_4",
+       "name": "Cells 1–4"
+      },
+      {
+       "type": "tile",
+       "entity": "sensor.pylontech_temperature_cells_5_8",
+       "name": "Cells 5–8"
+      },
+      {
+       "type": "tile",
+       "entity": "sensor.pylontech_temperature_cells_9_12",
+       "name": "Cells 9–12"
+      },
+      {
+       "type": "tile",
+       "entity": "sensor.pylontech_temperature_cells_13_15",
+       "name": "Cells 13–15"
+      },
+      {
+       "type": "tile",
+       "entity": "binary_sensor.pylontech_charge_immediately_request",
+       "name": "Charge request"
+      },
+      {
+       "type": "tile",
+       "entity": "sensor.pylontech_charge_voltage_limit",
+       "name": "Charge V limit"
+      },
+      {
+       "type": "tile",
+       "entity": "sensor.pylontech_discharge_voltage_limit",
+       "name": "Discharge V limit"
+      },
+      {
+       "type": "tile",
+       "entity": "sensor.pylontech_charge_current_limit",
+       "name": "Charge A limit"
+      },
+      {
+       "type": "tile",
+       "entity": "sensor.pylontech_discharge_current_limit",
+       "name": "Discharge A limit"
+      },
+      {
+       "type": "tile",
+       "entity": "binary_sensor.pylontech_charge_mosfet",
+       "name": "Charge MOSFET"
+      },
+      {
+       "type": "tile",
+       "entity": "binary_sensor.pylontech_discharge_mosfet",
+       "name": "Discharge MOSFET"
+      },
+      {
+       "type": "tile",
+       "entity": "binary_sensor.pylontech_fully_charged",
+       "name": "Fully charged"
+      },
+      {
+       "type": "tile",
+       "entity": "binary_sensor.pylontech_heater",
+       "name": "Heater"
+      }
+     ]
+    },
+    {
+     "type": "grid",
+     "column_span": 2,
+     "cards": [
+      {
+       "type": "heading",
+       "heading": "History",
+       "icon": "mdi:chart-line"
+      },
+      {
+       "type": "history-graph",
+       "title": "Cell spread (7 days)",
+       "hours_to_show": 168,
+       "entities": [
+        "sensor.pylontech_cell_spread",
+        "sensor.pylontech_cell_spread_7d_avg"
+       ],
+       "grid_options": {
+        "columns": "full"
+       }
+      },
+      {
+       "type": "history-graph",
+       "title": "Cell min / max (7 days)",
+       "hours_to_show": 168,
+       "entities": [
+        "sensor.pylontech_cell_min_voltage",
+        "sensor.pylontech_cell_max_voltage"
+       ],
+       "grid_options": {
+        "columns": "full"
+       }
+      },
+      {
+       "type": "history-graph",
+       "title": "All cells (24 h)",
+       "hours_to_show": 24,
+       "entities": [
+        "sensor.pylontech_cell_01_voltage",
+        "sensor.pylontech_cell_02_voltage",
+        "sensor.pylontech_cell_03_voltage",
+        "sensor.pylontech_cell_04_voltage",
+        "sensor.pylontech_cell_05_voltage",
+        "sensor.pylontech_cell_06_voltage",
+        "sensor.pylontech_cell_07_voltage",
+        "sensor.pylontech_cell_08_voltage",
+        "sensor.pylontech_cell_09_voltage",
+        "sensor.pylontech_cell_10_voltage",
+        "sensor.pylontech_cell_11_voltage",
+        "sensor.pylontech_cell_12_voltage",
+        "sensor.pylontech_cell_13_voltage",
+        "sensor.pylontech_cell_14_voltage",
+        "sensor.pylontech_cell_15_voltage"
+       ],
+       "grid_options": {
+        "columns": "full"
+       }
+      },
+      {
+       "type": "history-graph",
+       "title": "Voltage, current & SOC (24 h)",
+       "hours_to_show": 24,
+       "entities": [
+        "sensor.pylontech_pack_voltage",
+        "sensor.pylontech_current",
+        "sensor.pylontech_soc_bms_remaining_full"
+       ],
+       "grid_options": {
+        "columns": "full"
+       }
+      },
+      {
+       "type": "history-graph",
+       "title": "Temperatures (7 days)",
+       "hours_to_show": 168,
+       "entities": [
+        "sensor.pylontech_bms_temperature",
+        "sensor.pylontech_temperature_cells_1_4",
+        "sensor.pylontech_temperature_cells_5_8",
+        "sensor.pylontech_temperature_cells_9_12",
+        "sensor.pylontech_temperature_cells_13_15"
+       ],
+       "grid_options": {
+        "columns": "full"
+       }
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
